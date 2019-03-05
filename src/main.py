@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import random
 import matplotlib.pyplot as plt
 
 def get_data():
@@ -26,35 +27,47 @@ def get_target():
 def signoid(x):
     return 1 / (1 + np.exp(-x))
 
-def rand_numb(n):
-    return np.random.random_sample((n))
+def rand_numb(n=1):
+    arr = []
+    for i in range(n):
+        arr.append(np.random.random_sample())
+    return arr
 
+def rand():
+    return np.random.random_sample()
 
 def train(data,target,epoch,l_rate):
     theta1=rand_numb(4)
     theta2=rand_numb(4)
-    bias1=rand_numb(1)
-    bias2=rand_numb(1)
+    bias1=rand()
+    bias2=rand()
+    
+    error1 = []
+    error2 = []
+    accuracy = []
 
     for m in range(epoch):
-        errors1=0.0
-        errors2=0.0
-        print('Epoch')
-        print(m+1)
+        errors1=0
+        errors2=0
+        print('Epoch %s' % (m+1))
+        acc=0
         
         for i in range(len(data)):
             o1=np.dot(data[i],theta1)+bias1
             o2=np.dot(data[i],theta2)+bias2
-
+            
             #activation function
             prediction1 = signoid(o1)
             prediction2 = signoid(o2)
 
+            if predict(prediction1)==target[i][0] and predict(prediction2)==target[i][1]:
+                acc+=1
+        
             #update theta
-            for j in range(len(theta1)):
-                theta1[j]=theta1[j]-l_rate*deltatheta(prediction1,target[i][0],data[i][j])
-                theta2[j]=theta2[j]-l_rate*deltatheta(prediction2,target[i][1],data[i][j])
-
+            for j in range(4):
+                theta1[j]-=l_rate*deltatheta(prediction1,target[i][0],data[i][j])
+                theta2[j]-=l_rate*deltatheta(prediction2,target[i][1],data[i][j])
+ 
             #update bias
             bias1=bias1-deltabias(prediction1,target[i][0])
             bias2=bias2-deltabias(prediction2,target[i][1])
@@ -62,19 +75,27 @@ def train(data,target,epoch,l_rate):
             errors1+=error(prediction1, target[i][0])
             errors2+=error(prediction2, target[i][1])
 
-        print(errors1/len(data))
-        print(errors2/len(data))
+        error1.append(errors1/len(data))
+        print("Error1 = %s" % (errors1/len(data)))
+
+        error2.append(errors1/len(data))
+        print("Error2 = %s" % (errors2/len(data)))
+
+        accuracy.append((acc/len(data))*100)
+        print("Accuracy = %s" % ((acc/len(data))*100))
+
         print()
 
+    return error1, error2, accuracy
+
 def predict(x):
-    if x >= 0.5
-        return 1
-    else return 0
+    p=0
+    if x >= 0.5:
+        p = 1
+    return p
 
 def error(prediction, target):
     return (prediction-target)**2
-
-def accuracy(prediction, target):
     
 
 def deltatheta(prediction, target, attr):
@@ -87,9 +108,14 @@ def main():
     data=get_data()
     target=get_target()
     l_rate=0.1
-    epoch=100
+    epoch=10
 
-    train(data,target,epoch,l_rate)
+    error1, error2, accuracy = train(data,target,epoch,l_rate)
+
+    print(error1)
+    print(error2)
+    print(accuracy)
+
 
 if __name__ == '__main__':
     main()
