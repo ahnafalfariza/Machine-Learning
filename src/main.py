@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import random
 import matplotlib.pyplot as plt
 
 def get_data(url):
@@ -125,12 +124,13 @@ def acc_chart(acc, epoch):
 
 def main():
     url='https://raw.githubusercontent.com/uiuc-cse/data-fa14/gh-pages/data/iris.csv'
+    #url="iris.csv"
     data = get_data(url)
     target = get_target(url)
     l_rate = 0.8
     epoch = 100
 
-    error1, error2, accuracy = train(data,target,epoch,l_rate)
+    error1, error2, accuracy = train(data,target,epoch,0.8)
     
     error_chart(error1, epoch)
     error_chart(error2, epoch)
