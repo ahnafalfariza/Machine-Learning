@@ -3,17 +3,15 @@ import pandas as pd
 import random
 import matplotlib.pyplot as plt
 
-def get_data():
+def get_data(url):
     x=[]
-    url='https://raw.githubusercontent.com/uiuc-cse/data-fa14/gh-pages/data/iris.csv'
     data = pd.read_csv(url)
     for i, row in data.iterrows():
         x.append([float(row[i]) for i in range (len(row)-1)])
     return x
 
-def get_target():
+def get_target(url):
     target = []
-    url='https://raw.githubusercontent.com/uiuc-cse/data-fa14/gh-pages/data/iris.csv'
     data = pd.read_csv(url)
     for i, row in data.iterrows():
         if (row[4]=='setosa'):
@@ -46,6 +44,8 @@ def train(data,target,epoch,l_rate):
     error2 = []
     accuracy = []
 
+    print("Learning Rate = %s" % (l_rate))
+
     for m in range(epoch):
         errors1=0
         errors2=0
@@ -69,8 +69,8 @@ def train(data,target,epoch,l_rate):
                 theta2[j]-=l_rate*deltatheta(prediction2,target[i][1],data[i][j])
  
             #update bias
-            bias1=bias1-deltabias(prediction1,target[i][0])
-            bias2=bias2-deltabias(prediction2,target[i][1])
+            bias1-=deltabias(prediction1,target[i][0])
+            bias2-=deltabias(prediction2,target[i][1])
             
             errors1+=error(prediction1, target[i][0])
             errors2+=error(prediction2, target[i][1])
@@ -97,24 +97,44 @@ def predict(x):
 def error(prediction, target):
     return (prediction-target)**2
     
-
 def deltatheta(prediction, target, attr):
     return (2*(prediction-target)*(1-prediction)*prediction*attr)
 
 def deltabias(prediction, target):
     return (2*(prediction-target)*(1-prediction)*prediction)
 
+def error_chart(error, epoch):
+    t = np.arange(epoch)
+    plt.plot(t,error)
+    
+    plt.xlabel('Epoch')
+    plt.ylabel('Error')
+    plt.title('Error Chart')
+    plt.grid(True)
+    plt.show()
+
+def acc_chart(acc, epoch):
+    t = np.arange(epoch)
+    plt.plot(t,acc)
+    
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.title('Accuracy Chart')
+    plt.grid(True)
+    plt.show()
+
 def main():
-    data=get_data()
-    target=get_target()
-    l_rate=0.1
-    epoch=10
+    url='https://raw.githubusercontent.com/uiuc-cse/data-fa14/gh-pages/data/iris.csv'
+    data = get_data(url)
+    target = get_target(url)
+    l_rate = 0.8
+    epoch = 100
 
     error1, error2, accuracy = train(data,target,epoch,l_rate)
-
-    print(error1)
-    print(error2)
-    print(accuracy)
+    
+    error_chart(error1, epoch)
+    error_chart(error2, epoch)
+    acc_chart(accuracy, epoch)
 
 
 if __name__ == '__main__':
