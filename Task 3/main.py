@@ -146,7 +146,7 @@ def kfold(k,data,target,epoch,l_rate):
 url="iris-modified.csv"
 originData = get_data(url)
 originTarget = get_target(url)
-l_rate = 0.8
+l_rate = 0.1
 epoch = 100
 k = 5
 
