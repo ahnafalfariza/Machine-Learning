@@ -80,16 +80,12 @@ def kfold(k,data,target,epoch,l_rate):
     bias1=rand()
     bias2=rand()
 
-    print("Learning Rate = %s" % (l_rate))
-
     for n in range(k):
         theta1=rand_numb(4)
         theta2=rand_numb(4)
         bias1=rand()
         bias2=rand()
 
-        print('Fold %s' % (n+1))
-        
         for m in range (epoch):
             errorsTrain1=0
             errorsTrain2=0
@@ -109,15 +105,6 @@ def kfold(k,data,target,epoch,l_rate):
                 prediction1 = signoid(getOutput(trainData[i],theta1,bias1))
                 prediction2 = signoid(getOutput(trainData[i],theta2,bias2))
             
-                #update theta
-                for j in range(4):
-                    theta1[j]-=l_rate*deltatheta(prediction1,trainTarget[i][0],trainData[i][j])
-                    theta2[j]-=l_rate*deltatheta(prediction2,trainTarget[i][1],trainData[i][j])
-     
-                #update bias
-                bias1-=deltabias(prediction1,trainTarget[i][0])
-                bias2-=deltabias(prediction2,trainTarget[i][1])
-                
                 #count accuracy
                 if predict(prediction1)==trainTarget[i][0] and predict(prediction2)==trainTarget[i][1]:
                     accTrain+=1
@@ -126,7 +113,16 @@ def kfold(k,data,target,epoch,l_rate):
                 errorsTrain1+=error(prediction1, trainTarget[i][0])
                 errorsTrain2+=error(prediction2, trainTarget[i][1])
 
-            #test
+                #update theta
+                for j in range(4):
+                    theta1[j]-=l_rate*deltatheta(prediction1,trainTarget[i][0],trainData[i][j])
+                    theta2[j]-=l_rate*deltatheta(prediction2,trainTarget[i][1],trainData[i][j])
+     
+                #update bias
+                bias1-=deltabias(prediction1,trainTarget[i][0])
+                bias2-=deltabias(prediction2,trainTarget[i][1])
+
+            # test
             for i in range(len(testData)):
                 #activation function
                 prediction1 = signoid(getOutput(trainData[i],theta1,bias1))
@@ -141,25 +137,16 @@ def kfold(k,data,target,epoch,l_rate):
                 errorsTest2+=error(prediction2, testTarget[i][1])
 
             errorTrain[n].append((errorsTrain1+errorsTrain2)/(2*len(trainData)))
-            # print("Error train %s = %s"  %(n,(errorsTrain1+errorsTrain2)/(2*len(trainData))))
-            
             accuracyTrain[n].append(accTrain/len(trainData))
-            # print("Accuracy train %s = %s"  %(n,(accTrain/len(trainData))))
-            
             errorTest[n].append((errorsTest1+errorsTest2)/(2*len(testData)))
-            # print("Error test %s = %s"  %(n,(errorsTest1+errorsTest2)/(2*len(testData))))
-            
             accuracyTest[n].append((accTest/len(testData)))
-            # print("Accuracy test %s = %s"  %(n,(accTest/len(testData))))
-
-        print()
-
+           
 
 #url='https://raw.githubusercontent.com/uiuc-cse/data-fa14/gh-pages/data/iris.csv'
 url="iris-modified.csv"
 originData = get_data(url)
 originTarget = get_target(url)
-l_rate = 0.1
+l_rate = 0.8
 epoch = 100
 k = 5
 
@@ -169,6 +156,21 @@ avgErrorTest = getAverage(errorTest)
 avgErrorTrain = getAverage(errorTrain)
 avgAccuracyTest = getAverage(accuracyTest)
 avgAccuracyTrain = getAverage(accuracyTrain)
+
+for i in range(5):
+    plt.plot(range(0,epoch),errorTest[i], label='Error Test', color='red')
+    plt.plot(range(0,epoch),errorTrain[i], label='Error Train', color='blue')
+    plt.title('Error Training and Testing K-%s' %(i+1))
+    plt.xlabel('Epoch')
+    plt.ylabel('Error')
+    plt.show()
+
+    plt.plot(range(0,epoch),accuracyTest[i], label='Accuracy Test', color='red')
+    plt.plot(range(0,epoch),accuracyTrain[i], label='Accuracy Train', color='blue')
+    plt.title('Accuracy Training and Testing K-%s' %(i+1))
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.show()
 
 plt.plot(range(0,epoch),avgErrorTest, label='Avg Error Test', color='red')
 plt.plot(range(0,epoch),avgErrorTrain, label='Avg Error Train', color='blue')
