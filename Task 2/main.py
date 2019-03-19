@@ -77,7 +77,7 @@ def train(data,target,epoch,l_rate):
         error1.append(errors1/len(data))
         print("Error1 = %s" % (errors1/len(data)))
 
-        error2.append(errors1/len(data))
+        error2.append(errors2/len(data))
         print("Error2 = %s" % (errors2/len(data)))
 
         accuracy.append((acc/len(data))*100)
@@ -123,14 +123,16 @@ def acc_chart(acc, epoch):
     plt.show()
 
 def main():
-    url='https://raw.githubusercontent.com/uiuc-cse/data-fa14/gh-pages/data/iris.csv'
-    #url="iris.csv"
+    #url='https://raw.githubusercontent.com/uiuc-cse/data-fa14/gh-pages/data/iris.csv'
+    url="iris-modified.csv"
     data = get_data(url)
     target = get_target(url)
-    l_rate = 0.8
-    epoch = 100
+    l_rate = 0.1
+    epoch = 25
 
-    error1, error2, accuracy = train(data,target,epoch,0.8)
+    print(data)
+    
+    error1, error2, accuracy = train(data,target,epoch,0.1)
     
     error_chart(error1, epoch)
     error_chart(error2, epoch)
